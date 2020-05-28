@@ -1,5 +1,4 @@
 # Coral
-Project for PS1-2020
 
 ## Installation and setup
 Install all dependencies first using
