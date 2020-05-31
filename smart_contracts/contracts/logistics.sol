@@ -2,12 +2,13 @@ pragma solidity ^0.5.0;
  
 contract Logistics {
     
-    address public Owner;
+    // import './drug_tracker.sol';
+    // import './material_tracker.sol';
     
     address[] entities;
     
     enum Role {
-        NOROLE, SUPPLIER, TRANSPORTER, MANUFACTURER, WHOLESALER, DISTRIBUTOR, RETAILER 
+        SUPPLIER, TRANSPORTER, MANUFACTURER, DISTRIBUTOR, RETAILER 
     }
     
     struct EntInfo {
@@ -15,10 +16,6 @@ contract Logistics {
         string loc;
         address ETHaddr;
         Role role;
-    }
-    
-    constructor() public {
-        Owner = msg.sender;
     }
     
     mapping(address => EntInfo) EntDetails;
@@ -31,14 +28,14 @@ contract Logistics {
         emit EntReg(ETHaddr, name);
     }
     
-    function getEntInfo (address Ent) public view returns (string memory name, string memory loc, address ETHaddr, Role role) {
+    function getEntInfo (address Ent) public view returns (string memory, string memory, address, Role) {
         return(EntDetails[Ent].name, EntDetails[Ent].loc, EntDetails[Ent].ETHaddr, EntDetails[Ent].role);
     }
     
-    function TotalEnt() public view returns(uint count) {
+    function TotalEnt() public view returns(uint) {
         return entities.length;
     }
-    function getEntbyIndex(uint i) public view returns(string memory name, string memory loc, address ETHaddr, Role role) {
+    function getEntbyIndex(uint i) public view returns(string memory, string memory, address, Role) {
         return getEntInfo(entities[i]);
     }
 }
