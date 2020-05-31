@@ -1,76 +1,73 @@
 pragma solidity ^0.5.0;
  
 contract DrugTracker {
+    
     string id;
     
-    function setId(string memory serial) public {
+    function setDrugId(string memory serial) public {
           id = serial;
     }
  
-    function getId() public view returns (string memory) {
+    function getDrugId() public view returns (string memory) {
           return id;
-    }
-    
-    struct Material {
-        string name;
-        string descp;
-        string manuf;
-        string manuf_date;
     }
     
     struct Drug {
         string name;
+        string drugID;
         string descp;
         string manuf;
         string manuf_date;
         bool initz;
     }
     
+    string[] drugIDlist;
+    
     mapping(string => Drug) storeDrug;
     
     mapping(address => mapping(string => bool)) storeWallet;
     
-    event DrugCreate(address account, string uuid, string manuf, string manuf_date);
+    event DrugCreate(address account, string drugID, string manuf, string manuf_date);
     event RejectCreate(address account, string uuid, string message);
 
-    function createDrug(string memory name, string memory descp, string memory uuid, string memory manuf, string memory manuf_date) public {
-        if (storeDrug[uuid].initz) {
-            emit RejectCreate(msg.sender, uuid, "A product with this uuid already exists");
+    function createDrug(string memory name, string memory descp, string memory drugID, string memory manuf, string memory manuf_date) public {
+        if (storeDrug[drugID].initz) {
+            emit RejectCreate(msg.sender, drugID, "A product with this uuid already exists");
             return;
         }
-        storeDrug[uuid] = Drug(name, descp, manuf, manuf_date, true);
-        storeWallet[msg.sender][uuid] = true;
-        emit DrugCreate(msg.sender, uuid, manuf, manuf_date);
+        storeDrug[drugID] = Drug(name, drugID, descp, manuf, manuf_date, true);
+        storeWallet[msg.sender][drugID] = true;
+        emit DrugCreate(msg.sender, drugID, manuf, manuf_date);
+        drugIDlist.push(drugID);
     }
     
-    event DrugTransf(address From, address To, string uuid);
-    event RejectTransf(address From, address To, string uuid, string message);
+    event DrugTransf(address From, address Distr, string drugID);
+    event RejectTransf(address From, address Distr, string drugID, string message);
     
-    function transfDrug(address To,  string memory uuid) public {
-        if (!storeDrug[uuid].initz) {
-            emit RejectTransf(msg.sender, To, uuid, "No product with this UUID exists");
-            return;
-        }
-        
-        if (!storeWallet[msg.sender][uuid]) {
-            emit RejectTransf(msg.sender, To, uuid, "The sender does not own a drug with this uuid.");
+    function transfDrug(address Distr,  string memory drugID) public {
+        if (!storeDrug[drugID].initz) {
+            emit RejectTransf(msg.sender, Distr, drugID, "No product with this UUID exists");
             return;
         }
         
-        storeWallet[msg.sender][uuid] = false;
-        storeWallet[To][uuid] = true;
-        emit DrugTransf(msg.sender, To, uuid);
+        if (!storeWallet[msg.sender][drugID]) {
+            emit RejectTransf(msg.sender, Distr, drugID, "The sender does not own a drug with this uuid.");
+            return;
+        }
+        
+        storeWallet[msg.sender][drugID] = false;
+        storeWallet[Distr][drugID] = true;
+        emit DrugTransf(msg.sender, Distr, drugID);
     }
     
-    function getDrugByUUID(string memory uuid) public view returns (string memory, string memory, string memory) {
-        return (storeDrug[uuid].name, storeDrug[uuid].descp, storeDrug[uuid].manuf);
+    function getDrugByUUID(string memory drugID) public view returns (string memory, string memory, string memory, string memory) {
+        return (storeDrug[drugID].name, storeDrug[drugID].descp, storeDrug[drugID].manuf, storeDrug[drugID].manuf_date);
     }
     
-    function isOwnerOf(address owner, string memory uuid) public view returns (bool) {
-        if(storeWallet[owner][uuid]) {
+    function isOwnerOf(address owner, string memory drugID) public view returns (bool) {
+        if(storeWallet[owner][drugID]) {
             return true;
         }
         return false;
     }
 }   
-
