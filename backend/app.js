@@ -5,26 +5,11 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const upload = multer();
 const app = express();
-
-// for parsing application/json
-app.use(bodyParser.json()); 
-
-// for parsing application/xwww-
-app.use(bodyParser.urlencoded({ extended: true })); 
-//form-urlencoded
-
-// for parsing multipart/form-data
-app.use(upload.array()); 
-app.use(express.static('public'));
-
-const checkAuth = require('./middleware/check-auth');
-
 const auth = require('./auth/authServer');
-
-
-
-
-
+const checkAuth = require('./middleware/check-auth');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(upload.array()); 
 app.use(cors());
 app.use(express.json())
 app.use('/auth', auth);
