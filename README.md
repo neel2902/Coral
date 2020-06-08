@@ -1,6 +1,6 @@
 # Coral
 
-##Installation
+## Installation
 CD to backend or smart-contracts folder and run the following command
 ```
 npm install
@@ -10,7 +10,7 @@ For coral-app use
 yarn install
 ```
 
-##BACKEND DOCUMENTATION
+## BACKEND DOCUMENTATION
 
 First create a local database with PostgreSQL. In psql shell run these commands:
 ```
@@ -31,7 +31,7 @@ Start server on port 5000
 npm start
 ```
 
-##FRONTEND DOCUMENTATION
+## FRONTEND DOCUMENTATION
 
 cd to coral-app and run
 ```
@@ -41,7 +41,7 @@ Coral app will be on port 3000.
 
 
 
-##SMART CONTRACTS DOCUMENTATION
+## SMART CONTRACTS DOCUMENTATION
 
 Install solidity extension for VScode
 https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity
