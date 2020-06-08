@@ -3,7 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const brcypt = require('bcrypt');
-
+const pool = require('../db/index');
 const users  = [
     {
         username: 'admin',
@@ -26,53 +26,71 @@ router.get('/', (req, res) => {
     })
 });
 
-router.post('/signup', (req,res) => {
-    //find if existing user by checking username with stored users
-    const username = req.body.username;
-    const password = req.body.password;
+router.post('/signup', async (req,res) => {
+
+        
+    // let founduser = users.find(user => user.username == username);
+
+    // if (founduser) {
+    //     return res.status(409).json({
+    //         message: 'Already exists!'
+    //     })
+    // }
+    // else {
+    //     const user = {
+    //         username: username,
+    //         password: password
+    //     }
+    //     users.push(user);
+    //     return res.status(200).json({
+    //         message: 'All ok!'
+    //     });
+    // }
 
 
-    let founduser = users.find(user => user.username == username);
 
-    if (founduser) {
-        return res.status(409).json({
-            message: 'Already exists!'
-        })
-    }
-    else {
-        const user = {
-            username: username,
-            password: password
+
+    try {
+        const findText = `SELECT * FROM users WHERE username='${req.body.username}'`;
+        const foundUser = await pool.query(findText);
+        if(foundUser.rowCount===0) {
+            const hashedPass = await brcypt.hash(req.body.password, 10);
+            const insertText = 'INSERT INTO users(username, password, role, geolocation, ethaddress) VALUES($1, $2, $3, $4, $5) RETURNING *'
+            const userData = [ req.body.username, hashedPass, req.body.role, req.body.location, req.body.ethAddress];
+            const result = await pool.query(insertText, userData);
+            console.log("User created", result);
+            res.status(201).send("User created");
         }
-        users.push(user);
-        return res.status(200).json({
-            message: 'All ok!'
-        });
-    }
-
-    //else hash the password and store in the database (user created? 201 || error? 500)
+        else {
+            res.status(409).send("User already exists");
+        }
+      } catch (err) {
+        console.log(err.stack);
+        res.status(400).send("Error");
+      }
 
 });
 
 
-router.post('/login', (req, res) => {
-    //find user by username
-    const { username, password } = req.body;
-
-    const found = users.find(user => (user.username == username && user.password  == password));
-
-    if (found) {
-        generateToken(username, res);
+router.post('/login', async (req, res) => {
+    // const { username, password } = req.body;
+    try {
+        const findText = `SELECT * FROM users WHERE username='${req.body.username}'`;
+        const foundUser = await pool.query(findText);
+        if (foundUser.rowCount===0) {
+            res.status(404).send("User not found");
+        }
+        else {
+            const authorized = await brcypt.compare(req.body.password, foundUser.rows[0].password );
+            if (authorized) {
+                generateToken(req.body.username, res);
+            }
+        }
     }
-    else {
-        res.status(401).json({
-            message: 'Login unsuccessful'
-        })
+    catch (err) {
+        console.log(err.stack);
+        res.status(401).send("Unauthorised");
     }
-    //brcypt compare passwords
-    //if true, jwt sign with {username}, JTW key, {expiresIn: '1h'} then save to variable token and return a message and token
-
-
 })
 
 
@@ -81,9 +99,11 @@ function generateToken(username, res) {
     const token = jwt.sign({
         username: username
     }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
-    res.header('Authorization', 'Bearer '+ token);
-    console.log(token);
-    res.status(200).send("Successfully authenticated");
+
+    res.status(200).json({
+        message: "Successfully authenticated",
+        token: token
+    });
 }
 
 
