@@ -1,31 +1,51 @@
 # Coral
 
-## Installation and setup
-Install all dependencies first using
+##Installation
+CD to backend or smart-contracts folder and run the following command
 ```
 npm install
 ```
-Install truffle globally on your machine
+For coral-app use
 ```
-npm install -g truffle
-```
-## Truffle test deployment
-```
-> cd contracts
-```
-Test the smart contract (optional)
-```
-> truffle test
+yarn install
 ```
 
-To deploy smart contracts run these commands
+##BACKEND DOCUMENTATION
+
+First create a local database with PostgreSQL. In psql shell run these commands:
 ```
-> truffle develop
+CREATE DATABASE coral;
+\c coral;
+CREATE TABLE users (
+	_id SERIAL PRIMARY KEY NOT NULL,
+	username VARCHAR(255) NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	role VARCHAR(20) NOT NULL,
+  geolocation VARCHAR(255) NOT NULL,
+  ethaddress VARCHAR(255) NOT NULL
+); 
 ```
-```
-> migrate --reset
-```
-CD back into root and run the frontend using static-server from start script.
+
+Start server on port 5000
 ```
 npm start
 ```
+
+##FRONTEND DOCUMENTATION
+
+cd to coral-app and run
+```
+npm start
+```
+Coral app will be on port 3000.
+
+
+
+##SMART CONTRACTS DOCUMENTATION
+
+Install solidity extension for VScode
+https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity
+
+F1 to compile current contract.
+
+
