@@ -50,32 +50,32 @@ contract Chain is Manufacturer, Consumer, Retailer, Distributor {
     }
     
     modifier processed (uint _upc) {
-        require(prod[upc].state == State.PROCESSED);
+        require(prod[_upc].state == State.PROCESSED);
         _;
     }
     
     modifier packed (uint _upc) {
-        require(prod[upc].state == State.PACKED);
+        require(prod[_upc].state == State.PACKED);
         _;
     }
     
     modifier sold (uint _upc) {
-        require(prod[upc].state == State.SOLD);
+        require(prod[_upc].state == State.SOLD);
         _;
     }
     
     modifier shipped (uint _upc) {
-        require(prod[upc].state == State.SHIPPED);
+        require(prod[_upc].state == State.SHIPPED);
         _;
     }
     
     modifier received (uint _upc) {
-        require(prod[upc].state == State.RECEIVED);
+        require(prod[_upc].state == State.RECEIVED);
         _;
     }
     
     modifier purchased (uint _upc) {
-        require(prod[upc].state == State.PURCHASED);
+        require(prod[_upc].state == State.PURCHASED);
         _;
     }
     
