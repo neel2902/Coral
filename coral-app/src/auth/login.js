@@ -1,4 +1,4 @@
-import React , {useState}  from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -70,13 +70,13 @@ const SignInSide = () => {
       username: username,
       password: password
     })
-    .then(response => {
-      localStorage.setItem('token', response.data.token);
-      
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .then(response => {
+        localStorage.setItem('token', response.data.token);
+
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
 
@@ -104,9 +104,9 @@ const SignInSide = () => {
               name="username"
               autoComplete="username"
               autoFocus
-              
-              value = {username}
-              onChange = {event => setUsername(event.target.value)}
+
+              value={username}
+              onChange={event => setUsername(event.target.value)}
             />
             <TextField
               variant="outlined"
@@ -119,8 +119,8 @@ const SignInSide = () => {
               id="password"
               autoComplete="current-password"
 
-              value = {password}
-              onChange = {event => setPassword(event.target.value)}
+              value={password}
+              onChange={event => setPassword(event.target.value)}
 
             />
             <Button
@@ -135,7 +135,7 @@ const SignInSide = () => {
             <Grid container>
               <Grid item>
                 <Link href="/signup" variant="body2">
-                Don't have an account? Sign Up
+                  Don't have an account? Sign Up
                 </Link>
               </Grid>
             </Grid>

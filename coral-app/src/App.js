@@ -5,20 +5,26 @@ import {
   Route,
 } from "react-router-dom";
 import './App.css';
-import login from './auth/login';
-import signup from './auth/signup';
-import consumer from './views/consumer';
+import Login from './auth/Login';
+import Signup from './auth/Signup';
+import Consumer from './views/Consumer';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
+const Dashboard = React.lazy(() => import('./views/Dashboard'));
 
 function App() {
   return (
     <div className="App">
-    <Router>
+      <Router>
         <Switch>
-          <Route exact path='/' component={consumer}/>
-          <Route exact path="/login" component={login}/>
-          <Route exact path="/signup" component={signup}/>
+          <AuthProvider>
+            <Route exact path='/' component={Consumer} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Signup} />
+            <ProtectedRoute exact path='/dashboard' component={Dashboard} />
+          </AuthProvider>
         </Switch>
-    </Router>
+      </Router>
     </div>
   );
 }

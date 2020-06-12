@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -61,19 +61,19 @@ const SignUp = () => {
   const [location, setLocation] = useState(null)
 
 
-  useEffect(()=> {
+  useEffect(() => {
     function success(position) {
-      const latitude  = position.coords.latitude;
+      const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      setLocation(latitude+','+longitude);
+      setLocation(latitude + ',' + longitude);
     }
-  
+
     function error() {
       alert('Unable to retrieve your location');
     }
 
 
-    if(!navigator.geolocation) {
+    if (!navigator.geolocation) {
       alert('Geolocation is not supported by your browser');
     } else {
       navigator.geolocation.getCurrentPosition(success, error);
@@ -82,7 +82,7 @@ const SignUp = () => {
   }, [])
 
 
-  
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(username, password, role, ethAddress, location);
@@ -93,114 +93,114 @@ const SignUp = () => {
       ethAddress: ethAddress,
       location: location
     })
-    .then(function (response) {
-      if (response.status === 201) {
-        setUsercreated(true);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .then(function (response) {
+        if (response.status === 201) {
+          setUsercreated(true);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
 
   return (
     <div>
-    {userCreated ? (<div>
-      <p>You have successfully signed up. Please <a href='/login'>login</a> now.</p>
+      {userCreated ? (<div>
+        <p>You have successfully signed up. Please <a href='/login'>login</a> now.</p>
       </div>) : (<Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="username"
-                name="username"
-                variant="outlined"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                autoFocus
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="username"
+                  name="username"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  autoFocus
 
 
-                value = {username}
-                onChange = {event => setUsername(event.target.value)}
-              />
+                  value={username}
+                  onChange={event => setUsername(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="ethAddress"
+                  label="Ethereum Address"
+                  name="ethAddress"
+                  autoComplete="ethAddress"
+
+                  value={ethAddress}
+                  onChange={event => setEthAddress(event.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id="role">Role in supply chain</InputLabel>
+                <Select
+                  labelId="role"
+                  id="role"
+                  value={role}
+                  onChange={event => setRole(event.target.value)}
+                >
+                  <MenuItem value="manufacturer">Manufacturer</MenuItem>
+                  <MenuItem value="distributor">Distributor</MenuItem>
+                  <MenuItem value="retailer">Retailer</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
+
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="ethAddress"
-                label="Ethereum Address"
-                name="ethAddress"
-                autoComplete="ethAddress"
-
-                value = {ethAddress}
-                onChange = {event => setEthAddress(event.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-            <InputLabel id="role">Role in supply chain</InputLabel>
-              <Select
-              labelId="role"
-              id="role"
-              value={role}
-              onChange={event => setRole(event.target.value)}
-              >
-                <MenuItem value="manufacturer">Manufacturer</MenuItem>
-                <MenuItem value="distributor">Distributor</MenuItem>
-                <MenuItem value="retailer">Retailer</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-
-                value={password}
-                onChange={event => setPassword(event.target.value)}
-
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign Up
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign Up
           </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href='/' variant="body2">
-                Already have an account? Sign in
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Link href='/' variant="body2">
+                  Already have an account? Sign in
               </Link>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
-    </Container> )}
+          </form>
+        </div>
+        <Box mt={5}>
+          <Copyright />
+        </Box>
+      </Container>)}
     </div>
   );
 }

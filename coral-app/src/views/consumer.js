@@ -1,8 +1,8 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
-const consumer = () => {
+const Consumer = () => {
     return (
         <div>
             <Link to='/signup'>Signup</Link>
@@ -16,4 +16,4 @@ const consumer = () => {
 
 
 
-export default consumer;
+export default Consumer;
