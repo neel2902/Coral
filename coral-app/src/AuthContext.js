@@ -3,7 +3,7 @@ import React, { useState, createContext } from 'react';
 const AuthContext = createContext();
 
 const AuthProvider = (props) => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') || false;
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') || false;
     const [authstatus, setAuthstatus] = useState(isLoggedIn);
 
     return (

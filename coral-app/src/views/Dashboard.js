@@ -7,7 +7,8 @@ const Dashboard = () => {
 
     const logout = () => {
         setAuthstatus(false);
-        localStorage.clear();
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('token');
     }
     
     return (

@@ -74,9 +74,9 @@ const SignInSide = () => {
       const result = await axios.post('http://localhost:5000/auth/login', { username: username, password: password });
       console.log(result);       
       console.log("[Authstatus]", authstatus);
-      localStorage.setItem('token', result.data.token);
-      localStorage.setItem('isLoggedIn', true);
-      setAuthstatus(localStorage.getItem('isLoggedIn'));
+      sessionStorage.setItem('token', result.data.token);
+      sessionStorage.setItem('isLoggedIn', true);
+      setAuthstatus(sessionStorage.getItem('isLoggedIn'));
       console.log("[Authstatus]", authstatus);
       history.push("/dashboard");
     }
