@@ -20,7 +20,7 @@ app.get('/coral', checkAuth, (req, res) => {
 });
 
 
-app.get('/', (req,res) => {
+app.get('/check', (req,res) => {
     res.json({
         message: 'Server is up and running!'
     })

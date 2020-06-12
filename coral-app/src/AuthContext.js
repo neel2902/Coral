@@ -3,7 +3,8 @@ import React, { useState, createContext } from 'react';
 const AuthContext = createContext();
 
 const AuthProvider = (props) => {
-    const [authstatus, setAuthstatus] = useState(false);
+    const isLoggedIn = localStorage.getItem('isLoggedIn') || false;
+    const [authstatus, setAuthstatus] = useState(isLoggedIn);
 
     return (
         <AuthContext.Provider value={[authstatus, setAuthstatus]}>

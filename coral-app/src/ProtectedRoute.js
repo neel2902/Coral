@@ -6,7 +6,7 @@ import { AuthContext } from './AuthContext';
 const ProtectedRoute = ({ component: Component, ...rest }) => {
     const [authstatus] = useContext(AuthContext);
     return (
-        <Route render={props => authstatus ? <Component {...props} /> : <Redirect to="/login" />} {...rest} />
+        <Route render={props => (authstatus && localStorage.getItem('isLoggedIn')) ? <Component {...props} /> : <Redirect to="/login" />} {...rest} />
     )
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -11,6 +11,10 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+
+import { AuthContext } from '../AuthContext';
+import { useHistory } from "react-router-dom";
+
 
 function Copyright() {
   return (
@@ -58,25 +62,27 @@ const useStyles = makeStyles((theme) => ({
 
 const SignInSide = () => {
   const classes = useStyles();
-
+  const history = useHistory();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [authstatus, setAuthstatus] = useContext(AuthContext);
 
 
-  const handleSubmit = event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(username, password);
-    axios.post('http://localhost:5000/auth/login', {
-      username: username,
-      password: password
-    })
-      .then(response => {
-        localStorage.setItem('token', response.data.token);
-
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    try {
+      const result = await axios.post('http://localhost:5000/auth/login', { username: username, password: password });
+      console.log(result);       
+      console.log("[Authstatus]", authstatus);
+      localStorage.setItem('token', result.data.token);
+      localStorage.setItem('isLoggedIn', true);
+      setAuthstatus(localStorage.getItem('isLoggedIn'));
+      console.log("[Authstatus]", authstatus);
+      history.push("/dashboard");
+    }
+    catch (e) {
+      alert(e.message);
+    }
   }
 
 
@@ -90,9 +96,15 @@ const SignInSide = () => {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
+          { authstatus ? 
+          <Typography component="h1" variant="h6">
+            You're already signed in.<br /> Sign in to a different account or go to <Link href="/dashboard" variant="body4">
+                  dashboard
+                </Link>
+          </Typography>:
           <Typography component="h1" variant="h5">
             Sign in
-          </Typography>
+          </Typography>}
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <TextField
               variant="outlined"

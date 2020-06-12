@@ -81,9 +81,23 @@ router.post('/login', async (req, res) => {
             res.status(404).send("User not found");
         }
         else {
+            console.log(foundUser.rows[0].password);
             const authorized = await brcypt.compare(req.body.password, foundUser.rows[0].password );
+            console.log(authorized);
             if (authorized) {
-                generateToken(req.body.username, res);
+                const token = jwt.sign({
+                    username: req.body.username
+                }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
+            
+                res.status(200).json({
+                    message: "Successfully authenticated",
+                    token: token
+                });
+            }
+            else {
+                res.status(401).json({
+                    message: "Unauthorised"
+                })
             }
         }
     }
@@ -91,20 +105,7 @@ router.post('/login', async (req, res) => {
         console.log(err.stack);
         res.status(401).send("Unauthorised");
     }
-})
-
-
-
-function generateToken(username, res) {
-    const token = jwt.sign({
-        username: username
-    }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
-
-    res.status(200).json({
-        message: "Successfully authenticated",
-        token: token
-    });
-}
+});
 
 
 
