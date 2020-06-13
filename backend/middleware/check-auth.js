@@ -8,11 +8,9 @@ module.exports = (req, res, next) => {
         req.userData = decoded;
         next();
     }
-    catch { err => {
-        return res.status(401).json({
-            message: 'Auth failed!',
-            error: err
-        });
-        }
+    catch { 
+        res.status(401).json({
+            error: "Invalid request, please send token in authorization header."
+        })
     }
 }

@@ -1,15 +1,30 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AuthContext } from '../AuthContext';
+import axios from 'axios';
 
 
 const Dashboard = () => {
     const [authstatus, setAuthstatus] = useContext(AuthContext);
+
 
     const logout = () => {
         setAuthstatus(false);
         sessionStorage.removeItem('isLoggedIn');
         sessionStorage.removeItem('token');
     }
+
+    useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        console.log(token);
+        axios.get('http://localhost:5000/dashboard', {
+            headers: {
+              Authorization: 'Bearer ' + token
+            }
+        })
+        .then(res => {console.log(res);}
+        )
+        .catch(err => console.log(err))
+    }, [])
     
     return (
         <div>
