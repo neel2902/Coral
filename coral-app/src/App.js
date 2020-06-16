@@ -7,7 +7,8 @@ import {
 import './App.css';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
-import Consumer from './views/Consumer';
+import Home from './views/Home';
+import Manufacturer from './views/Manufacturer';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import Dashboard from './views/Dashboard';
@@ -17,7 +18,8 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-            <Route exact path='/' component={Consumer} />
+            <Route exact path='/' component={Home} />
+            <Route exact path='/manufacturer' component={Manufacturer} />
           <AuthProvider>
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
