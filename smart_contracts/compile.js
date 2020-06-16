@@ -22,7 +22,7 @@ var input = {
   };
    
 //   var output = JSON.parse(solc.compile(JSON.stringify(input))).contracts['Main.sol'].Chain.abi;
-  var output2 = JSON.parse(solc.compile(JSON.stringify(input))).contracts['Main.sol'].Chain.evm.bytecode;
+//   var output2 = JSON.parse(solc.compile(JSON.stringify(input))).contracts['Main.sol'].Chain.evm.bytecode;
 
 console.log(output2);
 //   const { abi: interface, evm: { bytecode: { object } } } = JSON.parse(solc.compile(JSON.stringify(input))).contracts['Main.sol'].Templatename; 

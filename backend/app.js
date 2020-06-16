@@ -8,7 +8,8 @@ const app = express();
 const auth = require('./auth/authServer');
 const checkAuth = require('./middleware/check-auth');
 const manufacturer = require('./routes/manufacturer');
-
+const distributor = require('./routes/distributor');
+const productController = require('./controllers/product');
 
 
 
@@ -21,22 +22,17 @@ app.use(express.json());
 
 
 app.use('/auth', auth);
-app.use('/manufacturer/', manufacturer);
+app.use('/manufacturer', manufacturer);
+app.use('/distributor', distributor);
 
 
 app.get('/dashboard', checkAuth, (req, res) => {
     res.send(req.userData);
 });
 
-app.get('/', (req,res) => {
-    res.json({
-        message: 'Server is up and running!'
-    })
+app.post('/getQR', productController.getProductQR);
+
+app.get('*', (req, res) => {
+    res.send("404 page not found");
 })
-
-
-
-
-
-
 app.listen(port)

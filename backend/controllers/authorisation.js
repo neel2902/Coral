@@ -1,4 +1,6 @@
 const pool = require('../db/index');
+const brcypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 exports.login =  async (req, res) => {
@@ -60,5 +62,4 @@ exports.signup = async (req,res) => {
         console.log(err.stack);
         res.status(400).send("Error");
       }
-
 }

@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import axios from 'axios';
 
 
 const Dashboard = () => {
     const [authstatus, setAuthstatus] = useContext(AuthContext);
-
+    const [role, setRole] = useState('');
 
     const logout = () => {
         setAuthstatus(false);
@@ -21,13 +21,18 @@ const Dashboard = () => {
               Authorization: 'Bearer ' + token
             }
         })
-        .then(res => {console.log(res);}
+        .then(res => {
+            console.log(res.data.role);
+            setRole(res.data.role);
+        }
         )
         .catch(err => console.log(err))
     }, [])
-    
+
+
     return (
         <div>
+            <h1>{role}</h1>
             <h1>Put your functions here. </h1>
             <p>{authstatus ? "you are authenticated": "false"}</p>
             <button onClick={logout}>Logout</button>

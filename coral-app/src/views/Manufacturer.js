@@ -1,14 +1,9 @@
 import React from 'react';
-
+import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,6 +13,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
+import Axios from 'axios';
 
 const AddressForm = () => {
   return (
@@ -26,82 +22,34 @@ const AddressForm = () => {
         Drug details
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
             required
-            id="firstName"
-            name="firstName"
-            label="First name"
+            id="DrugName"
+            name="DrugName"
+            label="Drug Name"
             fullWidth
             autoComplete="given-name"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            fullWidth
-            autoComplete="family-name"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            id="address1"
-            name="address1"
-            label="Address line 1"
+            id="upc"
+            name="upc"
+            label="Unique Product Code"
             fullWidth
             autoComplete="shipping address-line1"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
+            required
             id="address2"
             name="address2"
-            label="Address line 2"
+            label="Description"
             fullWidth
-            autoComplete="shipping address-line2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField id="state" name="state" label="State/Province/Region" fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
-            fullWidth
-            autoComplete="shipping postal-code"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-            label="Use this address for payment details"
+            autoComplete="description"
           />
         </Grid>
       </Grid>
@@ -113,123 +61,25 @@ const PaymentForm = () => {
     return (
       <React.Fragment>
         <Typography variant="h6" gutterBottom>
-          Payment method
+          Account Address Details
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <TextField required id="cardName" label="Name on card" fullWidth autoComplete="cc-name" />
+          <Grid item xs={12}>
+            <TextField required id="cardName" label="Your address" fullWidth/>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <TextField
               required
               id="cardNumber"
-              label="Card number"
+              label="Receiver's Address"
               fullWidth
-              autoComplete="cc-number"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField required id="expDate" label="Expiry date" fullWidth autoComplete="cc-exp" />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              id="cvv"
-              label="CVV"
-              helperText="Last three digits on signature strip"
-              fullWidth
-              autoComplete="cc-csc"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-              label="Remember credit card details for next time"
             />
           </Grid>
         </Grid>
       </React.Fragment>
     );
 }
-
-  const products = [
-    { name: 'Product 1', desc: 'A nice thing', price: '$9.99' },
-    { name: 'Product 2', desc: 'Another thing', price: '$3.45' },
-    { name: 'Product 3', desc: 'Something else', price: '$6.51' },
-    { name: 'Product 4', desc: 'Best thing of all', price: '$14.11' },
-    { name: 'Shipping', desc: '', price: 'Free' },
-  ];
-  const addresses = ['1 Material-UI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
-  const payments = [
-    { name: 'Card type', detail: 'Visa' },
-    { name: 'Card holder', detail: 'Mr John Smith' },
-    { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
-    { name: 'Expiry date', detail: '04/2024' },
-  ];
   
-  const useStyles1 = makeStyles((theme) => ({
-    listItem: {
-      padding: theme.spacing(1, 0),
-    },
-    total: {
-      fontWeight: 700,
-    },
-    title: {
-      marginTop: theme.spacing(2),
-    },
-  }));
-  
-    const Review = () => {
-    const classes = useStyles1();
-  
-    return (
-      <React.Fragment>
-        <Typography variant="h6" gutterBottom>
-          Order summary
-        </Typography>
-        <List disablePadding>
-          {products.map((product) => (
-            <ListItem className={classes.listItem} key={product.name}>
-              <ListItemText primary={product.name} secondary={product.desc} />
-              <Typography variant="body2">{product.price}</Typography>
-            </ListItem>
-          ))}
-          <ListItem className={classes.listItem}>
-            <ListItemText primary="Total" />
-            <Typography variant="subtitle1" className={classes.total}>
-              $34.06
-            </Typography>
-          </ListItem>
-        </List>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="h6" gutterBottom className={classes.title}>
-              Shipping
-            </Typography>
-            <Typography gutterBottom>John Smith</Typography>
-            <Typography gutterBottom>{addresses.join(', ')}</Typography>
-          </Grid>
-          <Grid item container direction="column" xs={12} sm={6}>
-            <Typography variant="h6" gutterBottom className={classes.title}>
-              Payment details
-            </Typography>
-            <Grid container>
-              {payments.map((payment) => (
-                <React.Fragment key={payment.name}>
-                  <Grid item xs={6}>
-                    <Typography gutterBottom>{payment.name}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography gutterBottom>{payment.detail}</Typography>
-                  </Grid>
-                </React.Fragment>
-              ))}
-            </Grid>
-          </Grid>
-        </Grid>
-      </React.Fragment>
-    );
-  }
 
   function Copyright() {
     return (
@@ -281,7 +131,7 @@ const PaymentForm = () => {
     },
   }));
   
-  const steps = ['Drug details', 'Shipping addresses', 'Review your order'];
+  const steps = ['Drug details', 'Shipping addresses'];
   
   function getStepContent(step) {
     switch (step) {
@@ -289,19 +139,21 @@ const PaymentForm = () => {
         return <AddressForm />;
       case 1:
         return <PaymentForm />;
-      case 2:
-        return <Review />;
       default:
         throw new Error('Unknown step');
     }
   }
   
-  export default function Checkout() {
+  const Checkout = () => {
     const classes = useStyles2();
     const [activeStep, setActiveStep] = React.useState(0);
   
     const handleNext = () => {
       setActiveStep(activeStep + 1);
+    };
+
+    const handleSubmit = () => {
+      
     };
   
     const handleBack = () => {
@@ -337,8 +189,7 @@ const PaymentForm = () => {
                     Thank you for your order.
                   </Typography>
                   <Typography variant="subtitle1">
-                    Your order number is #2001539. We have emailed your order confirmation, and will
-                    send you an update when your order has shipped.
+                    Awaiting response...
                   </Typography>
                 </React.Fragment>
               ) : (
@@ -353,7 +204,12 @@ const PaymentForm = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={handleNext}
+                      onClick={() => {
+                        handleNext();
+                        if(activeStep===steps.length -1) {
+                          handleSubmit();
+                        }
+                      }}
                       className={classes.button}
                     >
                       {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
@@ -368,3 +224,6 @@ const PaymentForm = () => {
       </React.Fragment>
     );
   }
+
+
+  export default Checkout;
