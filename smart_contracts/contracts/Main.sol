@@ -8,17 +8,17 @@ library Entities {
         mapping (address => bool) entMap;
     }
     function own (Entity storage ent, address acc) public view returns (bool) {
-        require(acc != address(0));
+        require(acc != address(0), "Unauthorised");
         return ent.entMap[acc];
     }
     function add (Entity storage ent, address acc) public {
-        require(acc != address(0));
-        require(!own(ent,acc));
+        require(acc != address(0), "Unauthorised");
+        require(!own(ent,acc), "Unauthorised");
         ent.entMap[acc] = true;
     }
     function rem (Entity storage ent, address acc) public {
-        require(acc != address(0));
-        require(own(ent,acc));
+        require(acc != address(0), "Unauthorised");
+        require(own(ent,acc), "Unauthorised");
         ent.entMap[acc] = false;
     }
 }
@@ -32,7 +32,7 @@ contract Supplier {
         _addSupp(msg.sender);
     }
     modifier onlySupp() {
-        require(isSupp(msg.sender));
+        require(isSupp(msg.sender), "Unauthorised");
         _;
     }
     function isSupp(address acc) public view returns  (bool) {
@@ -63,7 +63,7 @@ contract Manufacturer {
         _addManuf(msg.sender);
     }
     modifier onlyManuf() {
-        require(isManuf(msg.sender));
+        require(isManuf(msg.sender), "Unauthorised");
         _;
     }
     function isManuf(address acc) public view returns (bool) {
@@ -94,7 +94,7 @@ contract Distributor {
         _addDistr(msg.sender);
     }
     modifier onlyDistr() {
-        require(isDistr(msg.sender));
+        require(isDistr(msg.sender), "Unauthorised");
         _;
     }
     function isDistr(address acc) public view returns (bool) {
@@ -125,7 +125,7 @@ contract Retailer {
         _addRetl(msg.sender);
     }
     modifier onlyRetl() {
-        require(isRetl(msg.sender));
+        require(isRetl(msg.sender), "Unauthorised");
         _;
     }
     function isRetl(address acc) public view returns (bool) {
@@ -156,7 +156,7 @@ contract Consumer {
         _addCons(msg.sender);
     }
     modifier onlyCons() {
-        require(isCons(msg.sender));
+        require(isCons(msg.sender), "Unauthorised");
         _;
     }
     function isCons(address acc) public view returns (bool) {
@@ -213,41 +213,41 @@ contract Chain is Manufacturer, Consumer, Retailer, Distributor {
     event Received(uint upc);
     event Purchased(uint upc);
     modifier verifyCaller (address _addr) {
-        require (msg.sender == _addr);
+        require (msg.sender == _addr, "Unauthorised");
         _;
     }
     modifier processed (uint _upc) {
-        require(prod[_upc].state == State.PROCESSED);
+        require(prod[_upc].state == State.PROCESSED, "Unauthorised");
         _;
     }
     modifier packed (uint _upc) {
-        require(prod[_upc].state == State.PACKED);
+        require(prod[_upc].state == State.PACKED, "Unauthorised");
         _;
     }
     modifier sold (uint _upc) {
-        require(prod[_upc].state == State.SOLD);
+        require(prod[_upc].state == State.SOLD, "Unauthorised");
         _;
     }
     modifier shipped (uint _upc) {
-        require(prod[_upc].state == State.SHIPPED);
+        require(prod[_upc].state == State.SHIPPED, "Unauthorised");
         _;
     }
     modifier received (uint _upc) {
-        require(prod[_upc].state == State.RECEIVED);
+        require(prod[_upc].state == State.RECEIVED, "Unauthorised");
         _;
     }
     modifier purchased (uint _upc) {
-        require(prod[_upc].state == State.PURCHASED);
+        require(prod[_upc].state == State.PURCHASED, "Unauthorised");
         _;
     }
     modifier onlyOwner() {
-        require(isOwner());
+        require(isOwner(), "Unauthorised");
         _;
     }
     function isOwner() public view returns (bool) {
-        require(msg.sender == God);
+        require(msg.sender == God, "Unauthorised");
     }
-    constructor() public {
+    constructor() public payable {
         sku = 1;
         upc = 1;
     }
@@ -272,7 +272,7 @@ contract Chain is Manufacturer, Consumer, Retailer, Distributor {
         prod[_upc].state = State.PACKED;
         emit Packed(_upc);
     }
-    function soldProd (uint _upc, uint _price) onlyDistr public packed(_upc) {
+    function soldProd (uint _upc, uint _price) public onlyDistr packed(_upc) {
         prod[_upc].ownerID = msg.sender;
         prod[_upc].distributorID = msg.sender;
         prod[_upc].state = State.SOLD;
@@ -295,7 +295,18 @@ contract Chain is Manufacturer, Consumer, Retailer, Distributor {
         prod[_upc].state = State.PURCHASED;
         emit Purchased(_upc);
     }
-    function viewStatus (uint _upc) public view returns (uint $sku, uint $upc, address $ownerID, address $manufID, string memory $descp, uint $productID, uint $price, State $state, address $distributorID,  address $retailerID, address $consumerID) {
+    function viewStatus (uint _upc) public view
+    returns (uint $sku,
+            uint $upc,
+            address $ownerID,
+            address $manufID,
+            string memory $descp,
+            uint $productID,
+            uint $price,
+            State $state,
+            address $distributorID,
+            address $retailerID,
+            address $consumerID) {
         $sku = prod[_upc].sku;
         $upc = prod[_upc].upc;
         $ownerID = prod[_upc].ownerID;
