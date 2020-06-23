@@ -52,7 +52,6 @@ exports.signup = async (req,res) => {
             const insertText = 'INSERT INTO users(username, password, role, geolocation, ethaddress) VALUES($1, $2, $3, $4, $5) RETURNING *'
             const userData = [ req.body.username, hashedPass, req.body.role, req.body.location, req.body.ethAddress];
             const result = await pool.query(insertText, userData);
-            console.log("User created", result);
             res.status(201).send("User created");
         }
         else {

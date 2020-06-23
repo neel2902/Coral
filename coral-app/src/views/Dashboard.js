@@ -1,11 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import axios from 'axios';
+import { AppBar, Toolbar, Typography, Button, makeStyles} from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
+import Manufacturer from './Manufacturer';
+import Distributor from './Distributor';
+import Retailer from './Retailer';
 
+
+
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+  }));
 
 const Dashboard = () => {
+    const classes = useStyles();
     const [authstatus, setAuthstatus] = useContext(AuthContext);
-    const [role, setRole] = useState('');
+    const [userData, setUserData] = useState({});
 
     const logout = () => {
         setAuthstatus(false);
@@ -22,8 +42,12 @@ const Dashboard = () => {
             }
         })
         .then(res => {
-            console.log(res.data.role);
-            setRole(res.data.role);
+            console.log(res.data);
+            setUserData({
+                username: res.data.username,
+                role: res.data.role,
+                ethaddress: res.data.ethaddress,
+            });
         }
         )
         .catch(err => console.log(err))
@@ -31,12 +55,36 @@ const Dashboard = () => {
 
 
     return (
-        <div>
-            <h1>{role}</h1>
-            <h1>Put your functions here. </h1>
-            <p>{authstatus ? "you are authenticated": "false"}</p>
-            <button onClick={logout}>Logout</button>
-        </div>
+        <React.Fragment>
+            <AppBar position="static">
+                <Toolbar>
+                <Typography variant="h6" className={classes.title}>
+                Coral
+                </Typography>
+                <Button color="inherit">
+                    <PersonIcon />
+                    {userData.username}
+                </Button>
+                <Button color="inherit" onClick={logout}>Logout</Button>
+                </Toolbar>
+            </AppBar>
+            {
+                (() => {
+                    if (userData.role === 'manufacturer') {
+                        return <Manufacturer address={userData.ethaddress}/>
+                    }
+                    else if (userData.role === 'distributor') {
+                        return <Distributor address={userData.ethaddress}/>
+                    }
+                    else if (userData.role === 'retailer') {
+                        return <Retailer address={userData.ethaddress}/>
+                    }
+                    else {
+                        return <h1>Role not found</h1>
+                    }
+                })()
+            }
+        </React.Fragment>
     )
 }
 

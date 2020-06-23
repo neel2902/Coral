@@ -1,16 +1,8 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import {Avatar, Button, CssBaseline, Typography, TextField, makeStyles, Box, Grid, Link, Paper} from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+
 
 import { AuthContext } from '../AuthContext';
 import { useHistory } from "react-router-dom";
@@ -21,7 +13,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        Coral
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

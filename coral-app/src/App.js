@@ -8,10 +8,11 @@ import './App.css';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Home from './views/Home';
-import Manufacturer from './views/Manufacturer';
+import GetQR from './views/GetQR';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import Dashboard from './views/Dashboard';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
       <Router>
         <Switch>
             <Route exact path='/' component={Home} />
-            <Route exact path='/manufacturer' component={Manufacturer} />
+            <Route exact path='/getQR' component={GetQR} />
           <AuthProvider>
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
