@@ -2,16 +2,17 @@ const QRCode = require('qrcode');
 const path = require('path');
 const p = path.join(__dirname, '..', 'renders', 'try.png');
 const pool = require('../db/index');
-
+const uniqid = require('uniqid');
 
 
 exports.saveProduct = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}'`;
+        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}' AND lot='${req.body.lot}' AND batch='${req.body.batch}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
-            const insertText = 'INSERT INTO products (upc, manufacturer, distributor) VALUES($1, $2, $3) RETURNING *';
-            const productData = [ req.body.upc, req.body.manufacturer, req.body.distributor];
+            const uid = uniqid();
+            const insertText = 'INSERT INTO products (id, productname, upc, lot, batch, manufacturer, distributor) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+            const productData = [ uid, req.body.productname, req.body.upc, req.body.lot, req.body.batch, req.body.manufacturer, req.body.distributor];
             const result = await pool.query(insertText, productData);
             console.log("Product created");
             res.status(201).send("Product created");
@@ -27,14 +28,14 @@ exports.saveProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}'`;
+        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
             res.status(404).send("Product does not exist!");
         }
         else {
-            const updateText = "UPDATE products SET retailer = ($1) WHERE upc = ($2)";
-            const productData = [ req.body.retailer, foundProduct.rows[0].upc ];
+            const updateText = "UPDATE products SET retailer = ($1) WHERE id = ($2)";
+            const productData = [ req.body.retailer, foundProduct.rows[0].id ];
             const result = await pool.query(updateText, productData);
             console.log("Product updated");
             res.status(200).send("Product updated");
@@ -97,7 +98,7 @@ exports.getCompletedOrders = async (req, res) => {
 
 exports.getProductQR = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}'`;
+        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
             res.send("Counterfeit drug!");
@@ -115,7 +116,7 @@ exports.getProductQR = async (req, res) => {
 
 exports.getProductData = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}'`;
+        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
             res.send("Counterfeit drug!");

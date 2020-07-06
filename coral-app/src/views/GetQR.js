@@ -1,43 +1,8 @@
 import React, { useState } from 'react';
 
-import { Grid, TextField, Button, Typography, Card, CardActionArea, CardMedia, CardContent, CardActions } from '@material-ui/core';
+import { Grid, TextField, Button, Typography } from '@material-ui/core';
 
 import axios from 'axios';
-
-
-
-const QRCard = (props) => {
-    return (
-        <Card style={{width: '350px', margin: '2em auto'}}>
-        <CardActionArea>
-            <CardMedia
-            component="img"
-            alt="Contemplative Reptile"
-            height="200"
-            width="200"
-            image={props.imgsrc}
-            title="QR"
-            />
-            <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-                Lizard
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                across all continents except Antarctica
-            </Typography>
-            </CardContent>
-        </CardActionArea>
-        <CardActions>
-            <Button size="small" color="primary">
-            Share
-            </Button>
-            <Button size="small" color="primary">
-            Learn More
-            </Button>
-        </CardActions>
-    </Card>)}
-
 
 const GetQR = () => {
 

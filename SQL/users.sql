@@ -1,0 +1,8 @@
+CREATE TABLE users (
+	_id SERIAL PRIMARY KEY NOT NULL,
+	username VARCHAR(255) NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	role VARCHAR(20) NOT NULL,
+	geolocation VARCHAR(255) NOT NULL,
+	ethaddress VARCHAR(255) NOT NULL
+); 

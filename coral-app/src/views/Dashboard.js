@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = () => {
     const classes = useStyles();
-    const [authstatus, setAuthstatus] = useContext(AuthContext);
+    const [,setAuthstatus] = useContext(AuthContext);
     const [userData, setUserData] = useState({});
 
     const logout = () => {

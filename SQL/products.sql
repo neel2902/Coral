@@ -1,0 +1,10 @@
+CREATE TABLE products (
+    id VARCHAR(255) PRIMARY KEY NOT NULL,
+	productname VARCHAR(255) NOT NULL,
+    upc VARCHAR(255) NOT NULL,
+	lot VARCHAR(255) NOT NULL,
+	batch VARCHAR(255) NOT NULL,
+    manufacturer VARCHAR(255) NOT NULL,
+    distributor VARCHAR(255) NOT NULL,
+    retailer VARCHAR(255)
+); 

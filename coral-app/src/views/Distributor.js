@@ -1,5 +1,5 @@
 import React, {Component, useState} from 'react';
-import {Avatar, Button, TextField, Paper, Link, Grid, Box, Typography, makeStyles, ListItem,ListItemText, List, ListItemAvatar} from '@material-ui/core';
+import {Avatar, Button, TextField, Paper, Grid, Typography, makeStyles, ListItem,ListItemText, List, ListItemAvatar} from '@material-ui/core';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import axios from 'axios';
@@ -67,7 +67,23 @@ class Pending extends Component {
                         <AddTwoToneIcon />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={"Product id: "+order.upc} secondary={"Manufacturer: "+order.manufacturer} />
+                    <ListItemText
+                        primary={"Order ID: "+order.id}
+                        secondary={
+                            <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                color="textPrimary"
+                            >
+                                {order.productname}
+                            </Typography>
+                            <Typography>
+                            {"Batch: " + order.batch + " Lot: " +order.lot}
+                            </Typography>
+                            </React.Fragment>
+                        }
+                    />
                 </ListItem>
                 );
             });
@@ -92,7 +108,7 @@ class Pending extends Component {
 const Distributor = (props) => {
     const classes = useStyles();
     const ownAddress = props.address;
-    const [upc, setUpc] = useState(null);
+    const [id, setId] = useState(null);
     const [retailer, setRetailer] = useState(null);
 
 
@@ -105,7 +121,7 @@ const Distributor = (props) => {
         };
 
         axios.post('http://localhost:5000/distributor/update',{
-            upc: upc,
+            id: id,
             retailer: retailer
         }, config)
         .then(result => {
@@ -136,11 +152,11 @@ const Distributor = (props) => {
                             variant="outlined"
                             required
                             fullWidth
-                            id="upc"
-                            label="Product id"
-                            name="upc"
-                            value={upc}
-                            onChange={(event)=>{setUpc(event.target.value)}}
+                            id="id"
+                            label="Order ID"
+                            name="id"
+                            value={id}
+                            onChange={(event)=>{setId(event.target.value)}}
                         />
                         </Grid>
                         <Grid item xs={12}>

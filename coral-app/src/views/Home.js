@@ -1,10 +1,8 @@
 import React, {Component, useState} from 'react';
-import { Link } from 'react-router-dom';
 import QrReader from 'react-qr-reader';
 import axios from 'axios';
 import './Home.css';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { FormGroup } from '@material-ui/core';
 
 
  
@@ -41,11 +39,10 @@ class QRreader extends Component {
 
 const Home = () => {
 
-    const [productid, setProductid] = useState('');
+    const [id, setId] = useState('');
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
     
     const [modalData, setModalData] = useState({});
 
@@ -53,15 +50,16 @@ const Home = () => {
     const getProductDetails = () => {
 
         axios.post('http://localhost:5000/getData', {
-            upc: productid
+            id: id
         })
             .then(res => {
                 setShow(true);
                 console.log(res.data);
 
                 setModalData({
-                    productID: res.data.upc,
+                    id: res.data.id,
                     manufacturer: res.data.manufacturer,
+                    productname: res.data.productname,
                     distributor: res.data.distributor,
                     retailer: res.data.retailer,
                 });
@@ -73,24 +71,26 @@ const Home = () => {
 
     return (
         <div className="row1">
-        <Modal show={show} onHide={handleClose}>
+        <Modal size="xl" show={show} onHide={handleClose}>
             <Modal.Header closeButton>
             <Modal.Title>Drug Details</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             {
-                modalData.productID ?
+                (modalData.id && modalData.retailer)?
                 <div>
             <h1 className="my-5">Your drug is verified!</h1>
             <table className="my-5" style={{width: '100%'}}>
                 <tr>
-                    <th>Product ID</th>
+                    <th>Order ID</th>
+                    <th>Product Name</th>
                     <th>Manufacturer</th>
                     <th>Distributor</th>
                     <th>Retailer</th>
                 </tr>
                 <tr>
-                    <td>{modalData.productID}</td>
+                    <td>{modalData.id}</td>
+                    <td>{modalData.productname}</td>
                     <td>{modalData.manufacturer}</td>
                     <td>{modalData.distributor}</td>
                     <td>{modalData.retailer}</td>
@@ -110,7 +110,7 @@ const Home = () => {
                 <h2>A decentralised application to detect counterfeit drugs</h2>
                 <div className="my-5">
                     <Form.Group style={{flexDirection: 'row'}} >
-                        <Form.Control type="text" placeholder="Product ID" onChange={(event)=> {setProductid(event.target.value)}} value={productid} className="w-25 mr-3" style={{display: 'inline-block'}}/>
+                        <Form.Control type="text" placeholder="Order ID" onChange={(event)=> {setId(event.target.value)}} value={id} className="w-25 mr-3" style={{display: 'inline-block'}}/>
                         <Button onClick={getProductDetails} variant="success">Get info</Button>
                     </Form.Group>
                 </div>

@@ -32,9 +32,13 @@ class Retailer extends Component {
         const orders = this.state.orders.map(order => {
             return (
             <TableRow key={order.upc}>
-            <TableCell component="th" scope="row">
-              {order.upc}
+            <TableCell component="th" align="center" scope="row">
+              {order.id}
             </TableCell>
+            <TableCell align="center">{order.productname}</TableCell>
+            <TableCell align="center">{order.upc}</TableCell>
+            <TableCell align="center">{order.lot}</TableCell>
+            <TableCell align="center">{order.batch}</TableCell>
             <TableCell align="center">{order.manufacturer}</TableCell>
             <TableCell align="center">{order.distributor}</TableCell>
           </TableRow> )
@@ -42,11 +46,15 @@ class Retailer extends Component {
         return (
             <React.Fragment>
             <Typography variant="h2" style={{textAlign: 'center', margin: '1em 0 0 '}}>Your orders</Typography> 
-            <TableContainer component={Paper} style={{width: '30%', margin: '5em auto'}}>
+            <TableContainer component={Paper} style={{width: '50%', margin: '5em auto'}}>
                 <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                    <TableCell>Product ID</TableCell>
+                    <TableCell align="center">Order ID</TableCell>
+                    <TableCell align="center">Product Name</TableCell>
+                    <TableCell align="center">UPC</TableCell>
+                    <TableCell align="center">Lot Number</TableCell>
+                    <TableCell align="center">Batch Number</TableCell>
                     <TableCell align="center">Manufacturer</TableCell>
                     <TableCell align="center">Distributor</TableCell>
                     </TableRow>

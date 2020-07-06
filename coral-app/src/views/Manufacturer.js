@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, makeStyles, Container} from '@material-ui/core';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 import axios from 'axios';
@@ -40,7 +40,10 @@ const useStyles = makeStyles((theme) => ({
 export default function Manufacturer(props) {
   const classes = useStyles();
 
+  const [productname, setProductname] = useState('');
   const [upc, setUpc] = useState('');
+  const [batch, setBatch] = useState('');
+  const [lot, setLot] = useState('');
   const [distributor, setDistributor] = useState('');
   const ownAddress = props.address;
 
@@ -56,7 +59,10 @@ export default function Manufacturer(props) {
     }
 
     axios.post('http://localhost:5000/manufacturer/save', {
+      productname: productname,
       upc: upc,
+      batch: batch,
+      lot: lot,
       manufacturer: ownAddress,
       distributor: distributor
     }, config)
@@ -90,6 +96,8 @@ export default function Manufacturer(props) {
                 id="productName"
                 label="Product Name"
                 autoFocus
+                value={productname}
+                onChange={(event) => {setProductname(event.target.value)}}
               />
             </Grid>
             <Grid item xs={12}>
@@ -97,9 +105,9 @@ export default function Manufacturer(props) {
                 variant="outlined"
                 required
                 fullWidth
-                id="upc"
-                label="Product id"
-                name="upc"
+                id="UPC"
+                label="UPC"
+                name="UPC"
                 value={upc}
                 onChange={(event) => {setUpc(event.target.value)}}
               />
@@ -109,9 +117,23 @@ export default function Manufacturer(props) {
                 variant="outlined"
                 required
                 fullWidth
-                id="description"
-                label="Description"
-                name="description"
+                id="batch"
+                label="Batch number"
+                name="batch"
+                value={batch}
+                onChange={(event) => {setBatch(event.target.value)}}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lot"
+                label="Lot number"
+                name="lot"
+                value={lot}
+                onChange={(event) => {setLot(event.target.value)}}
               />
             </Grid>
             <Grid item xs={12}>
