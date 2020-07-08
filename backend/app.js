@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const port = process.env.PORT || 5000;
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -11,7 +12,7 @@ const manufacturer = require('./routes/manufacturer');
 const retailer = require('./routes/retailer');
 const distributor = require('./routes/distributor');
 const productController = require('./controllers/product');
-
+const renders = path.join(__dirname, 'renders');
 
 
 app.use(bodyParser.json());
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(upload.array()); 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.static(renders));
 
 
 app.use('/auth', auth);
@@ -32,7 +33,7 @@ app.get('/dashboard', checkAuth, (req, res) => {
     res.send(req.userData);
 });
 
-app.post('/getQR', productController.getProductQR);
+app.get('/getQR/:id', productController.getProductQR);
 app.post('/getData', productController.getProductData);
 
 

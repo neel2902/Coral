@@ -98,7 +98,7 @@ exports.getCompletedOrders = async (req, res) => {
 
 exports.getProductQR = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
+        const findText = `SELECT * FROM products WHERE id='${req.params.id}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
             res.send("Counterfeit drug!");
@@ -106,6 +106,7 @@ exports.getProductQR = async (req, res) => {
         else {
             const productDetails = foundProduct.rows[0];
             await generateQR(JSON.stringify(productDetails), res);
+            res.setHeader('Content-Type','image/png')
             res.sendFile(p);
         }
     } catch (error) {
