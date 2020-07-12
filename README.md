@@ -1,5 +1,11 @@
 # Coral
 
+
+## Requirements for running locally
+* Node (v10 or higher)
+* PostgreSQL (v12)
+
+
 ## Installation
 
 Install nodemon globally
@@ -11,10 +17,11 @@ CD to backend or smart-contracts folder and run the following command
 ```
 npm install
 ```
-For coral-app use
+For coral-app use either yarn or npm.
 ```
 yarn install
 ```
+
 
 ## BACKEND DOCUMENTATION
 
@@ -36,6 +43,6 @@ cd to coral-app and run
 ```
 npm start
 ```
-Coral app will be on port 3000.
+Coral app will be on port 3000. (localhost:3000)
 
 
