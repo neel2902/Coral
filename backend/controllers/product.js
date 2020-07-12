@@ -7,13 +7,13 @@ const uniqid = require('uniqid');
 
 exports.saveProduct = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE upc='${req.body.upc}' AND lot='${req.body.lot}' AND batch='${req.body.batch}'`;
+        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
         const foundProduct = await pool.query(findText);
         if(foundProduct.rowCount===0) {
-            const uid = uniqid();
-            const insertText = 'INSERT INTO products (id, productname, upc, lot, batch, manufacturer, distributor) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *';
-            const productData = [ uid, req.body.productname, req.body.upc, req.body.lot, req.body.batch, req.body.manufacturer, req.body.distributor];
+            const insertText = 'INSERT INTO products (id, productname, upc, sku) VALUES($1, $2, $3, $4) RETURNING *';
+            const productData = [ req.body.id, req.body.productname, req.body.upc, req.body.sku];
             const result = await pool.query(insertText, productData);
+            console.log(result);
             console.log("Product created");
             res.status(201).send("Product created");
         }
@@ -21,10 +21,12 @@ exports.saveProduct = async (req, res) => {
             res.send("Product already exists!");
         }
     } catch (err) {
-        console.log(err.stack);
+        console.log(err);
         res.status(400).send("Error");
     }
 }
+
+
 
 exports.updateProduct = async (req, res) => {
     try {
@@ -42,9 +44,29 @@ exports.updateProduct = async (req, res) => {
             
         }
     } catch (err) {
-        console.log(err.stack);
+        console.log(err);
         res.status(400).send("Error");
     }
+}
+
+
+exports.getProducts = async(req, res) => {
+    try {
+        const findText = `SELECT * FROM products`;
+        const foundProducts = await pool.query(findText);
+        if(foundProducts.rowCount===0) {
+            res.send("No pending orders");
+        }
+        else {
+            const productDetails = foundProducts.rows;
+            res.status(200).json(productDetails);
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).send("Error");
+    }
+
 }
 
 
@@ -60,27 +82,9 @@ const generateQR = async (text, res) => {
     }
 }
 
-
-exports.getPendingOrders = async (req, res) => {
-    try {
-        const findText = `SELECT * FROM products WHERE distributor = '${req.userData.ethaddress}' AND RETAILER IS NULL`;
-        const foundOrders = await pool.query(findText);
-        if(foundOrders.rowCount===0) {
-            res.send("No pending orders");
-        }
-        else {
-            const productDetails = foundOrders.rows;
-            res.status(200).json(productDetails);
-        }
-    } catch (error) {
-        res.status(400).send("Error");
-    }
-}
-
 exports.getCompletedOrders = async (req, res) => {
     try {
-        console.log(req.userData);
-        const findText = `SELECT * FROM products WHERE retailer = '${req.userData.ethaddress}'`;
+        const findText = `SELECT * FROM shipments WHERE receiver = '${req.userData.username}'`;
         const foundOrders = await pool.query(findText);
         if(foundOrders.rowCount===0) {
             res.send("No pending orders");
@@ -94,39 +98,99 @@ exports.getCompletedOrders = async (req, res) => {
     }
 }
 
+
+exports.getSentOrders = async (req, res) => {
+    try {
+        const findText = `SELECT * FROM shipments WHERE sender = '${req.userData.username}'`;
+        const foundOrders = await pool.query(findText);
+        if(foundOrders.rowCount===0) {
+            res.send("No pending orders");
+        }
+        else {
+            const productDetails = foundOrders.rows;
+            res.status(200).json(productDetails);
+        }
+    } catch (error) {
+        res.status(400).send("Error");
+    }
+}
 
 
 exports.getProductQR = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE id='${req.params.id}'`;
-        const foundProduct = await pool.query(findText);
-        if(foundProduct.rowCount===0) {
+        const findText = `SELECT * FROM shipmentdetails WHERE id='${req.params.id}'`;
+        const foundShipmentDetails = await pool.query(findText);
+        if(foundShipmentDetails.rowCount===0) {
             res.send("Counterfeit drug!");
         }
         else {
-            const productDetails = foundProduct.rows[0];
-            await generateQR(JSON.stringify(productDetails), res);
-            res.setHeader('Content-Type','image/png')
-            res.sendFile(p);
+            const shipmentid = foundShipmentDetails.rows[0].shipmentid;
+            const productid = foundShipmentDetails.rows[0].productid;
+            const findText2 = `SELECT * FROM shipments WHERE id='${shipmentid}'`;
+            const findText3 = `SELECT * FROM products WHERE id='${productid}'`;
+            const foundShipment = await pool.query(findText2);
+            const foundProduct = await pool.query(findText3);
+            const date = foundShipment.rows[0].date;
+            const lot = foundShipment.rows[0].lot;
+            const batch = foundShipment.rows[0].batch;
+            const sender = foundShipment.rows[0].sender;
+            const receiver = foundShipment.rows[0].receiver;
+            const productname = foundProduct.rows[0].productname;
+
+            const data = {
+                shipmentid: shipmentid,
+                productid: productid,
+                productname: productname,
+                date: date,
+                lot: lot,
+                batch: batch,
+                sender: sender,
+                receiver: receiver
+            }
+        await generateQR(JSON.stringify(data), res);
+        res.setHeader('Content-Type','image/png');
+        res.sendFile(p);
         }
     } catch (error) {
-        console.log(error.stack);
+        console.log(error);
         res.status(400).send("Error");
     }
 }
 
 exports.getProductData = async (req, res) => {
     try {
-        const findText = `SELECT * FROM products WHERE id='${req.body.id}'`;
-        const foundProduct = await pool.query(findText);
-        if(foundProduct.rowCount===0) {
+        const findText = `SELECT * FROM shipmentdetails WHERE id='${req.body.id}'`;
+        const foundShipmentDetails = await pool.query(findText);
+        if(foundShipmentDetails.rowCount===0) {
             res.send("Counterfeit drug!");
         }
         else {
-            const productDetails = foundProduct.rows[0];
-            res.status(200).json(productDetails);
+            const shipmentid = foundShipmentDetails.rows[0].shipmentid;
+            const productid = foundShipmentDetails.rows[0].productid;
+            const findText2 = `SELECT * FROM shipments WHERE id='${shipmentid}'`;
+            const findText3 = `SELECT * FROM products WHERE id='${productid}'`;
+            const foundShipment = await pool.query(findText2);
+            const foundProduct = await pool.query(findText3);
+            const date = foundShipment.rows[0].date;
+            const lot = foundShipment.rows[0].lot;
+            const batch = foundShipment.rows[0].batch;
+            const sender = foundShipment.rows[0].sender;
+            const receiver = foundShipment.rows[0].receiver;
+            const productname = foundProduct.rows[0].productname;
+
+            const data = {
+                shipmentid: shipmentid,
+                productid: productid,
+                productname: productname,
+                date: date,
+                lot: lot,
+                batch: batch,
+                sender: sender,
+                receiver: receiver
+            }
+            res.status(200).json(data);
         }
     } catch (error) {
-        res.status(400).send("Error");
+        res.status(404).send("Not found");
     }
 }

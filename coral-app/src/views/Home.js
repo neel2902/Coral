@@ -57,11 +57,14 @@ const Home = () => {
                 console.log(res.data);
 
                 setModalData({
-                    id: res.data.id,
-                    manufacturer: res.data.manufacturer,
+                    id: res.data.shipmentid,
+                    productid: res.data.productid,
                     productname: res.data.productname,
-                    distributor: res.data.distributor,
-                    retailer: res.data.retailer,
+                    date: res.data.date,
+                    lot: res.data.lot,
+                    batch: res.data.batch,
+                    sender: res.data.sender,
+                    receiver: res.data.receiver
                 });
             })
             .catch(err => {
@@ -77,23 +80,29 @@ const Home = () => {
             </Modal.Header>
             <Modal.Body>
             {
-                (modalData.id && modalData.retailer)?
+                (modalData.id)?
                 <div>
             <h1 className="my-5">Your drug is verified!</h1>
             <table className="my-5" style={{width: '100%'}}>
                 <tr>
-                    <th>Order ID</th>
+                    <th>Shipment ID</th>
+                    <th>Product ID</th>
                     <th>Product Name</th>
-                    <th>Manufacturer</th>
-                    <th>Distributor</th>
-                    <th>Retailer</th>
+                    <th>Date</th>
+                    <th>Lot</th>
+                    <th>Batch</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
                 </tr>
                 <tr>
                     <td>{modalData.id}</td>
+                    <td>{modalData.productid}</td>
                     <td>{modalData.productname}</td>
-                    <td>{modalData.manufacturer}</td>
-                    <td>{modalData.distributor}</td>
-                    <td>{modalData.retailer}</td>
+                    <td>{modalData.date}</td>
+                    <td>{modalData.lot}</td>
+                    <td>{modalData.batch}</td>
+                    <td>{modalData.sender}</td>
+                    <td>{modalData.receiver}</td>
                 </tr>
             </table>
             </div> : <h1 className="text-danger">This product is not verified and is possibly counterfeit!</h1>

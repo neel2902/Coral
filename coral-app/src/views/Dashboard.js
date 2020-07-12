@@ -71,13 +71,13 @@ const Dashboard = () => {
             {
                 (() => {
                     if (userData.role === 'manufacturer') {
-                        return <Manufacturer address={userData.ethaddress}/>
+                        return <Manufacturer username={userData.username}/>
                     }
                     else if (userData.role === 'distributor') {
-                        return <Distributor address={userData.ethaddress}/>
+                        return <Distributor username={userData.username}/>
                     }
                     else if (userData.role === 'retailer') {
-                        return <Retailer address={userData.ethaddress}/>
+                        return <Retailer username={userData.username}/>
                     }
                     else {
                         return <h1>Role not found</h1>

@@ -16,9 +16,13 @@ class Retailer extends Component {
                 Authorization: 'Bearer ' + sessionStorage.getItem('token')
             }
         }
-        axios.get('http://localhost:5000/retailer/getOrders', config)
+        axios.get('http://localhost:5000/retailer/getCompletedOrders', config)
         .then((result) => {
-            const orderarray = result.data;
+            
+            let orderarray = [];
+            if (typeof(result.data) != 'string') {
+                orderarray = result.data;
+            }
             this.setState({
                 orders : orderarray
             })
@@ -29,20 +33,26 @@ class Retailer extends Component {
     }
 
     render () {
-        const orders = this.state.orders.map(order => {
-            return (
-            <TableRow key={order.upc}>
-            <TableCell component="th" align="center" scope="row">
-              {order.id}
-            </TableCell>
-            <TableCell align="center">{order.productname}</TableCell>
-            <TableCell align="center">{order.upc}</TableCell>
-            <TableCell align="center">{order.lot}</TableCell>
-            <TableCell align="center">{order.batch}</TableCell>
-            <TableCell align="center">{order.manufacturer}</TableCell>
-            <TableCell align="center">{order.distributor}</TableCell>
-          </TableRow> )
-        })
+        let orders=[];
+        console.log(orders);
+        console.log(this.state.orders.length);
+        if (this.state.orders.length > 0) {
+            orders = this.state.orders.map(order => {
+                return (
+                <TableRow key={order.id}>
+                <TableCell component="th" align="center" scope="row">
+                  {order.id}
+                </TableCell>
+                <TableCell align="center">{order.date}</TableCell>
+                <TableCell align="center">{order.lot}</TableCell>
+                <TableCell align="center">{order.batch}</TableCell>
+                <TableCell align="center">{order.sender}</TableCell>
+              </TableRow> )
+            })
+        }
+        else {
+            orders= <Typography>You have not received any orders</Typography>
+        }
         return (
             <React.Fragment>
             <Typography variant="h2" style={{textAlign: 'center', margin: '1em 0 0 '}}>Your orders</Typography> 
@@ -51,12 +61,10 @@ class Retailer extends Component {
                 <TableHead>
                     <TableRow>
                     <TableCell align="center">Order ID</TableCell>
-                    <TableCell align="center">Product Name</TableCell>
-                    <TableCell align="center">UPC</TableCell>
+                    <TableCell align="center">Date</TableCell>
                     <TableCell align="center">Lot Number</TableCell>
                     <TableCell align="center">Batch Number</TableCell>
-                    <TableCell align="center">Manufacturer</TableCell>
-                    <TableCell align="center">Distributor</TableCell>
+                    <TableCell align="center">Sender</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -1,8 +1,8 @@
-import React, { useState} from 'react';
-import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, makeStyles, Container} from '@material-ui/core';
+import React, { useState, useEffect, Component} from 'react';
+import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, makeStyles, Chip} from '@material-ui/core';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 import axios from 'axios';
-
+import Modal from '@material-ui/core/Modal';
 
 function Copyright() {
   return (
@@ -18,8 +18,19 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  modalpaper: {
+    position: 'absolute',
+    width: '40%',
+    top: '40%',
+    left: '50%',
+    transform: "translate(-50%,-50%)",
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
   paper: {
-    marginTop: theme.spacing(8),
+    margin: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -38,46 +49,82 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Manufacturer(props) {
-  const classes = useStyles();
 
+  //modal code here
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const classes = useStyles();
   const [productname, setProductname] = useState('');
   const [upc, setUpc] = useState('');
-  const [batch, setBatch] = useState('');
-  const [lot, setLot] = useState('');
-  const [distributor, setDistributor] = useState('');
-  const ownAddress = props.address;
-
+  const [id, setid] = useState('');
+  const [sku, setsku] = useState('');
+  const [productList, setProductList] = useState('');
+  const ownusername = props.username;
   const token = sessionStorage.getItem('token');
 
 
-  const handleSubmit = () => {
 
+  useEffect(()=>{
     let config = {
       headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }
     }
+    axios.get('http://localhost:5000/manufacturer/getProducts', config)
+    .then((res) => {
 
+      let products = [];
+      if (typeof(res.data) != 'string') {
+        products = res.data.map(product => {
+          return {
+            productid: product.id,
+            quantity: 0
+          }
+        })
+      }
+
+      setProductList(products);
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }, []);
+
+
+  let config = {
+    headers: {
+      'Authorization': 'Bearer ' + token
+    }
+  }
+
+  const handleSubmit = () => {
     axios.post('http://localhost:5000/manufacturer/save', {
+      id: id,
       productname: productname,
       upc: upc,
-      batch: batch,
-      lot: lot,
-      manufacturer: ownAddress,
-      distributor: distributor
+      sku: sku
     }, config)
     .then(res => {
       alert(res.data);
+      window.location.reload();
     })
     .catch(err => {
       alert(err);
     })
-
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Grid container>
       <CssBaseline />
+      <Grid item xs={12} md={4}>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LocalHospitalIcon />
@@ -87,6 +134,18 @@ export default function Manufacturer(props) {
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
+          <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="id"
+                label="Product ID"
+                name="id"
+                value={id}
+                onChange={(event) => {setid(event.target.value)}}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 name="productName"
@@ -117,50 +176,14 @@ export default function Manufacturer(props) {
                 variant="outlined"
                 required
                 fullWidth
-                id="batch"
-                label="Batch number"
-                name="batch"
-                value={batch}
-                onChange={(event) => {setBatch(event.target.value)}}
+                id="sku"
+                label="SKU"
+                name="sku"
+                value={sku}
+                onChange={(event) => {setsku(event.target.value)}}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lot"
-                label="Lot number"
-                name="lot"
-                value={lot}
-                onChange={(event) => {setLot(event.target.value)}}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                name="se"
-                variant="outlined"
-                required
-                fullWidth
-                id="disabled"
-                label="Your ethereum address"
-                value={ownAddress}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="receiver"
-                label="Receiver's address"
-                type="receiver"
-                id="receiver"
-                value={distributor}
-                onChange={(event) => {setDistributor(event.target.value)}}
-              />
-            </Grid>
+            .
           </Grid>
           <Button
             fullWidth
@@ -173,9 +196,171 @@ export default function Manufacturer(props) {
           </Button>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
-    </Container>
+      </Grid>
+      <Grid item xs={12} md={8}>
+          <div className={classes.paper}>
+          <Grid container>
+              <Grid item xs={12}>
+                <Button variant="contained" color="secondary" onClick={handleOpen}>
+                Add shipment
+                </Button>
+                <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="simple-modal-title"
+                  aria-describedby="simple-modal-description"
+                >
+                    <div className={classes.modalpaper}>
+                      <ModalBody products={productList} username={ownusername} productList={productList}/>
+                    </div>
+                </Modal>
+              </Grid>
+            </Grid>
+          </div>
+        </Grid>
+    </Grid>
   );
+}
+
+
+
+
+class ModalBody extends Component {
+  state = {
+    products: this.props.productList,
+    lot: "",
+    batch: "",
+    sender: this.props.username,
+    receiver: ""
+  }
+
+  inputOnChange = (value, index) => {
+    this.setState(state => {
+      const products = state.products.map((product, j) => {
+        if (j === index) {
+          return {
+            ...product,
+            quantity: Number(value)
+          };
+        } else {
+          return product
+        }
+      });
+      return {
+        products: products
+      };
+    });
+  };
+
+  componentDidMount() {
+    console.log(this.state)
+  }
+
+
+  submitEventHandler = () => {
+    
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }
+    }
+    const validProducts = this.state.products.filter(product => product.quantity>0)
+    const data = {
+      products: validProducts,
+      lot: this.state.lot,
+      batch: this.state.batch,
+      sender: this.state.sender,
+      receiver: this.state.receiver
+    }
+    console.log(data);
+    axios.post('http://localhost:5000/manufacturer/createShipment', data, config)
+    .then((res) => {
+      alert(res.data);
+    })
+    .catch((err) => {
+      alert(err);
+    })
+  }
+
+  render() {
+    const ownedproducts = this.state.products.map((product,index) => {
+      return (
+        <div key={product.productid} style={{display: "flex", justifyContent: "space-between", margin: '1.5em'}}>
+          <Chip label={product.productid}></Chip>
+          <TextField size="small" id="quantity" label="Quantity" variant="outlined" value={product.quantity} onChange={(event)=>{
+            this.inputOnChange(event.target.value, index)}} />
+        </div>
+      )
+    }); 
+    return(
+      <div>
+        <Typography variant="h3" style={{margin: "1em auto"}}>Enter shipment details</Typography>
+        <form noValidate>
+          <Grid container spacing={2}>
+          <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lot"
+                label="Lot number"
+                name="lot"
+                value={this.state.lot}
+                onChange={(event) => {this.setState({lot: event.target.value})}}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                name="batch"
+                variant="outlined"
+                required
+                fullWidth
+                id=""
+                label="Batch Number"
+                autoFocus
+                value={this.state.batch}
+                onChange={(event) => {this.setState({batch: event.target.value})}}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="sender"
+                label="Sender's username"
+                name="sender"
+                value={this.state.sender}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="receiver"
+                label="Receiver's username"
+                name="reciever"
+                value={this.state.receiver}
+                onChange={(event) => {this.setState({receiver: event.target.value})}}
+              />
+            </Grid>
+            .
+          </Grid>
+          <Grid item sm={12}>
+            {ownedproducts}
+          </Grid>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={this.submitEventHandler}
+          >
+            Add shipment
+          </Button>
+        </form>
+      </div>
+    );
+  }
 }
